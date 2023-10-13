@@ -1,0 +1,55 @@
+[
+    {
+        "name": "Wifi_RSSI",
+        "type": "char",
+        "length": 6,
+        "direction": "display"
+    },
+    {
+        "name": "WLAN_RSSI",
+        "type": "int8_t",
+        "length": 8,
+        "direction": "display",
+        "display": "graph",
+        "xaxis": 60
+    },
+    {
+        "type": "separator"
+    },
+    {
+        "name": "DCF77_Sync",
+        "type": "bool",
+        "direction": "display"
+    },
+    {
+        "name": "Time",
+        "type": "char",
+        "length": 255,
+        "direction": "display"
+    },
+    {
+        "name": "Date",
+        "type": "char",
+        "length": 255,
+        "direction": "display"
+    },
+    {
+        "type": "separator"
+    },
+    {
+        "type": "header",
+        "text": "Erweiterte Funktionen"
+    },
+    {                                 
+        "name": "Reboot",
+        "type": "bool",
+        "direction": "control",
+        "hidden": false
+    },
+    {                                 
+        "name": "Online_update",
+        "type": "bool",
+        "direction": "control",
+        "hidden": false
+    }
+]

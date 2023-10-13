@@ -1,0 +1,62 @@
+[
+    {
+        "name": "projectName",
+        "label": "Project Name",
+        "type": "char",
+        "disabled": true,
+        "hidden": true,
+        "length": 32,
+        "value": "KIDBUILD LIXIE"
+    },
+    {
+        "name": "projectVersion",
+        "label": "Project Version",
+        "type": "char",
+        "disabled": true,
+        "hidden": true,
+        "length": 8,
+        "value": "0.1"
+    },
+    {
+        "name": "Time_Zone",
+        "label": "Zeitzone",
+        "type": "char",
+        "length": 40,
+        "value": "PSTR(CET-1CEST,M3.5.0,M10.5.0/3)",
+        "control": "select",
+        "options": [
+            "PSTR(CET-1CEST,M3.5.0,M10.5.0/3)",
+            "PSTR(EET-2EEST,M3.5.0/3,M10.5.0/4)",
+            "PSTR(IST-1GMT0,M10.5.0,M3.5.0/1)",
+            "PSTR(EET-2EEST,M3.5.0/3,M10.5.0/4)"
+        ],
+        "optionLabels": [
+            "Europe - Berlin / Amsterdam / Andorra",
+            "Europe - Athens",
+            "Europe - Dublin",
+            "Europe - Bukarest/Helsinki"
+        ]
+    },
+    {
+        "type": "separator"
+    },
+    {
+        "name": "wifi_hostname",
+        "label": "WiFi Hostname",
+        "type": "char",
+        "length": 20,
+        "value": "LIXIE"
+    },
+    {
+        "type": "separator"
+    },
+    {
+        "name": "matrixIntensity",
+        "label": "LED Helligkeit",
+        "type": "uint8_t",
+        "value": "30",
+        "control": "slider",
+        "min": 0,
+        "max": 255
+    }
+]
