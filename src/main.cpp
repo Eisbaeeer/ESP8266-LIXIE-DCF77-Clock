@@ -66,19 +66,27 @@ bool isCaptive;
 bool updatePending;
 bool reboot;
 uint8_t intensity;
+bool secondBlink;
 
 // DCF77
-#define DCF_PIN 13 // Connection pin to DCF 77 device
-#define DCF_ENABLE 15 // Ground pin of module
-#define DCF_INTERRUPT 13  // Interrupt number associated with pin
-DCF77 DCF = DCF77(DCF_PIN,DCF_INTERRUPT);
-
-
+#define DCF_PIN 13                          // Connection pin to DCF 77 device
+#define DCF_ENABLE 15                       // Ground pin of module
+#define DCF_INTERRUPT 13                    // Interrupt number associated with pin
+DCF77 DCF = DCF77(DCF_PIN,DCF_INTERRUPT);   // Interrupt DCF77
 
 // SUBROUTINES
 //*************************************************************************************
 
 // NEOPIXELBUS ANIMATION BEGIN
+void colorWipe(uint8_t R, uint8_t G, uint8_t B) {
+  RgbColor RGB(R,G,B);
+    for(uint8_t i=0; i<PixelCount; i++) { // For each pixel...
+      strip.SetPixelColor(i, RGB);
+      strip.Show();
+      delay(20);
+    }
+}
+
 void FadeAll(uint8_t darkenBy)
 {
     RgbColor color;
@@ -240,8 +248,10 @@ void setup() {
     uint8_t intensity = configManager.data.matrixIntensity;
     strip.SetBrightness(intensity);
     SetupAnimations();
-    //colorWipe(0,0,255);
     strip.Show();
+    colorWipe(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+    delay(1000);
+    colorWipe(0,0,0);
 
     // DCF77
   DCF.Start();
@@ -260,6 +270,7 @@ void loop() {
   configManager.loop();
   dash.loop();
 
+  
   //tasks
     if (taskA.previous == 0 || (millis() - taskA.previous > taskA.rate)) {
         taskA.previous = millis();
@@ -290,14 +301,44 @@ void loop() {
   // DCF77
   time_t DCFtime = DCF.getTime(); // Check if new DCF77 time is available
   if (DCFtime!=0) {
-    Serial.println("Time is updated");
+    Serial.println(F("Time is updated"));
     setTime(DCFtime);
+    dash.data.Last_Sync = 0;
     dash.data.DCF77_Sync = true;
   }
   digitalClockDisplay();  
-    
-}
 
+  // Blink separator
+  if (secondBlink) {
+    secondBlink = false;
+    RgbColor AUS(0,0,0);
+    strip.SetPixelColor(13, AUS);
+  } else {
+    secondBlink = true;
+    RgbColor RGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+    strip.SetPixelColor(13, RGB);
+  }
+  strip.Show();
+
+  // WS2812 TEST  
+  /***
+    if (second() > PixelCount) {
+        for(uint8_t i=0; i<PixelCount; i++) { // For each pixel...
+          RgbColor AUS(0,0,0);
+          strip.SetPixelColor(i, AUS);
+          strip.Show();
+        }
+      } else {    
+      RgbColor RGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+      int sec = second();
+      strip.SetPixelColor(sec, RGB);
+      strip.Show();
+      }
+  ***/
+    
+} // TASK A END
+
+  // TASK B
     if (taskB.previous == 0 || (millis() - taskB.previous > taskB.rate)) {
         taskB.previous = millis();
     
@@ -307,6 +348,147 @@ void loop() {
         dash.loop();
         reboot = true;
     }
+
+  // Check if DCF signal is OK
+  dash.data.Last_Sync++;
+  Serial.print(F("Minutes since last DCF Sync: "));
+  Serial.println(dash.data.Last_Sync);
+  if (dash.data.Last_Sync > 5) {
+    dash.data.DCF77_Sync = false;
+  }
+
+  // Display Time on NIXIE
+  
+  // Take off all LEDs
+  //for(uint8_t i=0; i<PixelCount; i++) { // For each pixel...
+  //  RgbColor AUS(0,0,0);
+  //  strip.SetPixelColor(i, AUS);
+  //  strip.Show();
+  //}
+
+  RgbColor RGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+  int hours = hour();
+  
+  byte upperHours = (hour() / 10) % 10;
+  byte lowerHours = hour() % 10;
+  byte upperMinutes = (minute() / 10) % 10;
+  byte lowerMinutes = minute() % 10;
+
+  Serial.print(F("upperHours: "));
+  Serial.println(upperHours);
+  Serial.print(F("lowerHours: "));
+  Serial.println(lowerHours);
+  Serial.print(F("upperMinutes: "));
+  Serial.println(upperMinutes);
+  Serial.print(F("lowerMinutes: "));
+  Serial.println(lowerMinutes);
+  
+  // Alle LED aus
+  for(uint8_t i=0; i<PixelCount; i++) { // For each pixel...
+          RgbColor AUS(0,0,0);
+          strip.SetPixelColor(i, AUS);
+        }
+
+  switch (upperHours) {
+
+        case 0: 
+            strip.SetPixelColor(0, RGB);
+            break;
+        case 1:
+            strip.SetPixelColor(1, RGB);
+            break;
+        case 2:
+            strip.SetPixelColor(2, RGB);
+            break;
+  }
+
+  switch (lowerHours) {
+        case 0: 
+            strip.SetPixelColor(3, RGB);
+            break;
+        case 1:
+            strip.SetPixelColor(4, RGB);
+            break;
+        case 2:
+            strip.SetPixelColor(5, RGB);
+            break;
+        case 3:
+            strip.SetPixelColor(6, RGB);
+            break;
+        case 4:
+            strip.SetPixelColor(7, RGB);
+            break;
+        case 5:
+            strip.SetPixelColor(8, RGB);
+            break;
+        case 6:
+            strip.SetPixelColor(9, RGB);
+            break;
+        case 7:
+            strip.SetPixelColor(10, RGB);
+            break;
+        case 8:
+            strip.SetPixelColor(11, RGB);
+            break;
+        case 9:
+            strip.SetPixelColor(12, RGB);
+            break;
+    }
+
+    switch (upperMinutes) {
+        case 0: 
+            strip.SetPixelColor(14, RGB);
+            break;
+        case 1:
+            strip.SetPixelColor(15, RGB);
+            break;
+        case 2:
+            strip.SetPixelColor(16, RGB);
+            break;
+        case 3:
+            strip.SetPixelColor(17, RGB);
+            break;
+        case 4:
+            strip.SetPixelColor(18, RGB);
+            break;
+        case 5:
+            strip.SetPixelColor(19, RGB);
+            break;
+    }
+
+    switch (lowerMinutes) {
+        case 0: 
+            strip.SetPixelColor(20, RGB);
+            break;
+        case 1:
+            strip.SetPixelColor(21, RGB);
+            break;
+        case 2:
+            strip.SetPixelColor(22, RGB);
+            break;
+        case 3:
+            strip.SetPixelColor(23, RGB);
+            break;
+        case 4:
+            strip.SetPixelColor(24, RGB);
+            break;
+        case 5:
+            strip.SetPixelColor(25, RGB);
+            break;
+        case 6:
+            strip.SetPixelColor(26, RGB);
+            break;
+        case 7:
+            strip.SetPixelColor(27, RGB);
+            break;
+        case 8:
+            strip.SetPixelColor(28, RGB);
+            break;
+        case 9:
+            strip.SetPixelColor(29, RGB);
+            break;
+    }
+    strip.Show();
   }
 }
 

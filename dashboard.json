@@ -22,6 +22,11 @@
         "direction": "display"
     },
     {
+        "name": "Last_Sync",
+        "type": "int8_t",
+        "direction": "display"
+    },
+    {
         "name": "Time",
         "type": "char",
         "length": 255,

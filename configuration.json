@@ -51,6 +51,12 @@
         "type": "separator"
     },
     {
+        "name": "ledColour",
+        "label": "LED Stripe Colour",
+        "type": "color",
+        "value": [0,0,255]
+    },
+    {
         "name": "matrixIntensity",
         "label": "LED Helligkeit",
         "type": "uint8_t",
