@@ -57,10 +57,11 @@ struct task
 
 task taskA = { .rate = 1000, .previous = 0 };     // 1 second
 task taskB = { .rate = 60000, .previous = 0 };    // 1 minute
+task taskC = { .rate = 100, .previous = 0 };      // 100 ms
 
 // Global definitions
 //*************************************************************************************
-#define BUILTIN_LED 2             // On board LED
+#define BUILTIN_LED 2
 int seconds;
 bool isCaptive;
 bool updatePending;
@@ -72,7 +73,8 @@ bool secondBlink;
 #define DCF_PIN 13                          // Connection pin to DCF 77 device
 #define DCF_ENABLE 15                       // Ground pin of module
 #define DCF_INTERRUPT 13                    // Interrupt number associated with pin
-DCF77 DCF = DCF77(DCF_PIN,DCF_INTERRUPT);   // Interrupt DCF77
+#define LED_PIN 2                           // DCF Signal visualization
+DCF77 DCF = DCF77(LED_PIN,DCF_PIN,DCF_INTERRUPT);   // Interrupt DCF77
 
 // SUBROUTINES
 //*************************************************************************************
@@ -236,10 +238,10 @@ void setup() {
   timeSync.begin(configManager.data.Time_Zone);
 
   //Onboard LED & analog port, etc
-  pinMode(BUILTIN_LED,OUTPUT);                 // LED
-  digitalWrite(BUILTIN_LED,1);                 // LED off
   pinMode(DCF_ENABLE,OUTPUT);                  // Ground pin of DCF module
   digitalWrite(DCF_ENABLE,LOW);
+  pinMode(BUILTIN_LED,OUTPUT);
+  digitalWrite(BUILTIN_LED,HIGH);
 
 
   // NeoPixelBus SETUP
@@ -270,8 +272,7 @@ void loop() {
   configManager.loop();
   dash.loop();
 
-  
-  //tasks
+    //tasks
     if (taskA.previous == 0 || (millis() - taskA.previous > taskA.rate)) {
         taskA.previous = millis();
 
@@ -309,6 +310,7 @@ void loop() {
   digitalClockDisplay();  
 
   // Blink separator
+  if (dash.data.DCF77_Sync) {
   if (secondBlink) {
     secondBlink = false;
     RgbColor AUS(0,0,0);
@@ -319,6 +321,7 @@ void loop() {
     strip.SetPixelColor(13, RGB);
   }
   strip.Show();
+  }
 
   // WS2812 TEST  
   /***
@@ -490,5 +493,32 @@ void loop() {
     }
     strip.Show();
   }
+
+  //tasks
+    if (taskC.previous == 0 || (millis() - taskC.previous > taskC.rate)) {
+        taskC.previous = millis();
+    bool signal = DCF.getSignal(); // Get DCF77 signal for LED
+    
+    if (signal) {
+      digitalWrite(BUILTIN_LED,LOW);
+    } else {
+      digitalWrite(BUILTIN_LED,HIGH);
+    }
+
+    // show signal on stripe during sync
+    if (!dash.data.DCF77_Sync) {
+      if (signal) {
+        RgbColor RGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+        strip.SetPixelColor(13, RGB);
+      } else {
+        RgbColor AUS(0,0,0);
+        strip.SetPixelColor(13, AUS);
+      }
+    strip.Show();
+    }
+
+  }
+
+
 }
 
