@@ -38,6 +38,11 @@
         ]
     },
     {
+        "name": "DCF77",
+        "type": "bool",
+        "value": true
+    }, 
+    {
         "type": "separator"
     },
     {
@@ -60,7 +65,7 @@
         "name": "matrixIntensity",
         "label": "LED Helligkeit",
         "type": "uint8_t",
-        "value": "30",
+        "value": "200",
         "control": "slider",
         "min": 0,
         "max": 255

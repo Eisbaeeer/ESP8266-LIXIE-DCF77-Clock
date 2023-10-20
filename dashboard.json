@@ -40,21 +40,5 @@
     },
     {
         "type": "separator"
-    },
-    {
-        "type": "header",
-        "text": "Erweiterte Funktionen"
-    },
-    {                                 
-        "name": "Reboot",
-        "type": "bool",
-        "direction": "control",
-        "hidden": false
-    },
-    {                                 
-        "name": "Online_update",
-        "type": "bool",
-        "direction": "control",
-        "hidden": false
     }
 ]
