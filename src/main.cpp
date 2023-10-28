@@ -75,6 +75,15 @@ void array_to_string(byte array[], unsigned int len, char buffer[])
     }
     buffer[len*2] = '\0';
 }
+
+void colorWipe(uint8_t R, uint8_t G, uint8_t B) {
+  RgbColor RGB(R,G,B);
+  for(uint8_t i=0; i<29; i++) { // For each pixel...
+      strip.SetPixelColor(i, RGB);
+      strip.Show();
+      delay(20);
+    } 
+}
  
 void printDigits(int digits){
   // utility function for digital clock display: prints preceding colon and leading 0
@@ -245,8 +254,8 @@ void saveCallback() {
 }
 
 void syncTime() {
-  if (timeSync.isSynced())
-    {
+  if (timeSync.isSynced()) {
+        dash.data.NTP_Sync = true;
         time_t now = time(nullptr);
         Serial.print(PSTR("[INFO] Current time in "));
         Serial.print(configManager.data.Time_Zone);
@@ -267,6 +276,7 @@ void syncTime() {
     }
     else 
     {
+      dash.data.NTP_Sync = false;
         Serial.println(F("[ERROR] Timeout while receiving the time"));
     }
 }
@@ -299,7 +309,6 @@ void setup() {
     strip.Begin();
     uint8_t intensity = configManager.data.matrixIntensity;
     strip.SetBrightness(intensity);
-    SetupAnimations();
     strip.Show();
     colorWipe(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
     delay(1000);
