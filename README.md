@@ -24,9 +24,9 @@ This project is a full source to create a LIXIE clock with DCF77 support and Web
 | GPIO3              | RX  | Data in            | WS2812B LED  |   
 | Vin or 5V          | Vin | +5V                | WS2812B LED  |
 | GND                | GND | GND                | WS2812B LED  |
-| GPIO13             | D7  | DCF77 signal       | DCF77        |
-| GND                | GND | GND                | DCF77        |
-| VDD 3.3V           | VDD | DCF77 Vss          | DCF77        |
+| GPIO14             | D7  | DCF77 signal       | DCF77        |
+| GPIO12             | GND | GND                | DCF77        |
+| GPIO13             | VDD | DCF77 Enable       | DCF77        |
 
 ![Logo](pics/Lasercut.jpg)
 ![Logo](pics/Number.jpg)
