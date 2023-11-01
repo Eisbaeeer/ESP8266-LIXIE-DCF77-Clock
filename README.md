@@ -35,6 +35,10 @@ This project is a full source to create a LIXIE clock with DCF77 support and Web
 - http://www.kidbuild.de or https://shop.kidbuild.de
 E-Mail info@kidbuild.de
 
+## Credits
+https://www.thingiverse.com/thing:5763808
+ala Creasento
+
 ## Changelog 
 
 ### Version 0.1
