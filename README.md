@@ -1,4 +1,4 @@
-![Logo](pics/Clock.png)
+![Logo](pics/Clock.jpg)
 # LIXIE Clock with DCF77 encoder
 
 ## Description
@@ -29,6 +29,7 @@ This project is a full source to create a LIXIE clock with DCF77 support and Web
 | VDD 3.3V           | VDD | DCF77 Vss          | DCF77        |
 
 ![Logo](pics/Lasercut.jpg)
+![Logo](pics/Number.jpg)
 
 ## Weblinks to get running
 - http://www.kidbuild.de or https://shop.kidbuild.de
