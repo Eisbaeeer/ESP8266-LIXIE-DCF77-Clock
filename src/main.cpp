@@ -47,14 +47,14 @@ task taskC = { .rate = 50, .previous = 0 };      // 50 ms
 #define BUILTIN_LED 2
 int seconds;
 bool isCaptive;
-bool updatePending;
 uint8_t intensity;
 bool secondBlink;
 
 // DCF77
-#define DCF_PIN 13                          // Connection pin to DCF 77 device
-#define DCF_ENABLE 15                       // Ground pin of module
-#define DCF_INTERRUPT 13                    // Interrupt number associated with pin
+#define DCF_PIN 14                          // Connection pin to DCF 77 device
+#define DCF_ENABLE 13                       // 3.3V for DCF Module
+#define DCF_GND 12                          // GND for DCF Module
+#define DCF_INTERRUPT 14                    // Interrupt number associated with pin
 #define LED_PIN 2                           // DCF Signal visualization
 #define DCF_SYNC_TIME 60                    // DCF Signal lost for more then 60 minutes
 DCF77 DCF = DCF77(LED_PIN,DCF_PIN,DCF_INTERRUPT);   // Interrupt DCF77
@@ -298,8 +298,10 @@ void setup() {
   WiFi.setAutoReconnect(true);
   
   //Onboard LED & analog port, etc
-  pinMode(DCF_ENABLE,OUTPUT);                  // Ground pin of DCF module
-  digitalWrite(DCF_ENABLE,LOW);
+  pinMode(DCF_ENABLE,OUTPUT);                   // 3.3V pin of DCF module
+  digitalWrite(DCF_ENABLE,HIGH);                // Take it high = 3.3V
+  pinMode(DCF_GND,OUTPUT);                      // GND pin of DCF module
+  digitalWrite(DCF_GND,LOW);                    // Take it LOW = 0V
   pinMode(BUILTIN_LED,OUTPUT);
   digitalWrite(BUILTIN_LED,HIGH);
 
@@ -311,7 +313,7 @@ void setup() {
     strip.SetBrightness(intensity);
     strip.Show();
     colorWipe(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
-    delay(1000);
+    delay(5000);
     colorWipe(0,0,0);
 
     // DCF77
@@ -350,13 +352,6 @@ void loop() {
         sprintf(dash.data.Wifi_RSSI, "%ld", rssi) ;
         dash.data.WLAN_RSSI = WiFi.RSSI();
       
-      
-  // update pending
-    if (updatePending) {
-      updatePending = false;
-      //updateFirmware();
-    }
-
   // DCF77
   if (configManager.data.DCF77) {
     time_t DCFtime = DCF.getTime(); // Check if new DCF77 time is available
