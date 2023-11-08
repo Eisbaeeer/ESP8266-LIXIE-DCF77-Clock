@@ -20,7 +20,5 @@ jobs:
       - name: Install PlatformIO Core
         run: pip install --upgrade platformio
       - uses: actions/setup-node@v3
-        with:
-          node-version: 14.3.0 # npm dependency resolution for esp8266 iot framework breaks with 16
       - name: Build PlatformIO Project
         run: pio run
