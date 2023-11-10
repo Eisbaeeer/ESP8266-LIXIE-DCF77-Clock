@@ -56,7 +56,7 @@ bool secondBlink;
 #define DCF_GND 12                          // GND for DCF Module
 #define DCF_INTERRUPT 14                    // Interrupt number associated with pin
 #define LED_PIN 2                           // DCF Signal visualization
-#define DCF_SYNC_TIME 60                    // DCF Signal lost for more then 60 minutes
+#define DCF_SYNC_TIME 1440                  // DCF Signal lost for more then 60 minutes
 DCF77 DCF = DCF77(LED_PIN,DCF_PIN,DCF_INTERRUPT);   // Interrupt DCF77
 
 
@@ -364,7 +364,7 @@ void loop() {
   }
   
     // Blink separator
-      if (dash.data.DCF77_Sync && configManager.data.DCF77 ) {
+      if (dash.data.DCF77_Sync && configManager.data.DCF77Indicator && configManager.data.DCF77) {
         if (secondBlink) {
           secondBlink = false;
           RgbColor AUS(0,0,0);
@@ -375,7 +375,7 @@ void loop() {
           strip.SetPixelColor(13, RGB);
         }
       } 
-      if (!configManager.data.DCF77) {
+      if (!configManager.data.DCF77Indicator) {
         if (secondBlink) {
           secondBlink = false;
           RgbColor AUS(0,0,0);
@@ -423,7 +423,7 @@ void loop() {
       }
 
       // show signal on stripe during sync
-      if (!dash.data.DCF77_Sync) {
+      if (!dash.data.DCF77_Sync && configManager.data.DCF77Indicator) {
         if (signal) {
           RgbColor RGB(255,0,0);          // red
           strip.SetPixelColor(13, RGB);

@@ -1,12 +1,14 @@
 [
     {
         "name": "Wifi_RSSI",
+        "label": "Wifi RSSI",
         "type": "char",
         "length": 6,
         "direction": "display"
     },
     {
         "name": "WLAN_RSSI",
+        "label": " ",
         "type": "int8_t",
         "length": 8,
         "direction": "display",
@@ -18,11 +20,13 @@
     },
     {
         "name": "DCF77_Sync",
+        "label": "DCF77 Synchronisiert",
         "type": "bool",
         "direction": "display"
     },
     {
         "name": "Last_Sync",
+        "label": "Letzter Sync",
         "type": "int8_t",
         "direction": "display"
     },
@@ -31,6 +35,7 @@
     },
     {
         "name": "NTP_Sync",
+        "label": "NTP Synchronisiert",
         "type": "bool",
         "direction": "display"
     },
@@ -39,12 +44,14 @@
     },
     {
         "name": "Time",
+        "label": "Uhrzeit",
         "type": "char",
         "length": 255,
         "direction": "display"
     },
     {
         "name": "Date",
+        "label": "Datum",
         "type": "char",
         "length": 255,
         "direction": "display"

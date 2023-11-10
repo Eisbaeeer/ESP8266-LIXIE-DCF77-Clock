@@ -6,7 +6,7 @@
         "disabled": true,
         "hidden": true,
         "length": 32,
-        "value": "KIDBUILD LIXIE"
+        "value": "LIXIE Clock"
     },
     {
         "name": "projectVersion",
@@ -38,10 +38,31 @@
         ]
     },
     {
+        "type": "separator"
+    },
+    {
         "name": "DCF77",
+        "label": "DCF77",
         "type": "bool",
         "value": true
-    }, 
+    },
+    {
+        "type": "label",
+        "text": "Bei Aktivierung wird die Uhrzeit mit dem DCF77 Signal synchronisiert."
+    },
+    {
+        "type": "separator"
+    },
+    {
+        "name": "DCF77Indicator",
+        "label": "Signal Indikator",
+        "type": "bool",
+        "value": false
+    },
+    {
+        "type": "label",
+        "text": "Bei Aktivierung zeigt der Doppelpunkt den Empfang des DCF77 Signals. Nach der Synchronisierung blinkt der Doppelpunkt im Sekundentakt in der definierten Farbe."
+    },
     {
         "type": "separator"
     },
@@ -69,5 +90,14 @@
         "control": "slider",
         "min": 0,
         "max": 255
+    },
+    {
+        "name": "matrixFade",
+        "label": "Überblendgeschwindigkeit",
+        "type": "uint8_t",
+        "value": "0",
+        "control": "slider",
+        "min": 0,
+        "max": 500
     }
 ]
