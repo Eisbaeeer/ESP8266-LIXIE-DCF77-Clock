@@ -10,23 +10,16 @@
 #include "timeSync.h"
 #include <TimeLib.h>
 #include <TZ.h>
-#include <NeoPixelBrightnessBus.h> // instead of NeoPixelBus.h
-#include <NeoPixelAnimator.h>
 #include <ESP8266httpUpdate.h>     // Web Updater online
 #include "DCF77.h"
 #include "TimeLib.h"
+#include <FastLED.h>
 
-// WS2812 definitions
-  const uint16_t PixelCount = 40; // this example assumes 4 pixels, making it smaller will cause a failure
-  const uint8_t PixelPin = 3;  // make sure to set this to the correct pin, ignored for Esp8266
-  //const RgbColor CylonEyeColor(HtmlColor(0x7f0000));
-  const RgbColor CylonEyeColor(0,0,255);
-#define colorSaturation 255 // saturation of color constants
-RgbColor blue(0, 0, colorSaturation);
-
-NeoPixelBrightnessBus<NeoGrbFeature, Neo800KbpsMethod> strip(PixelCount, PixelPin);
-//NeoPixelBrightnessBus<NeoGrbFeature, Neo800KbpsMethod>* strip = NULL;
-NeoPixelAnimator animations(2); // only ever need 2 animations
+// FASTLED WS2812 definitions
+#define NUM_LEDS 30
+#define DATA_PIN 3  
+// Define the array of leds
+CRGB leds[NUM_LEDS];
 
 // Update client
 WiFiClient updateclient;
@@ -64,8 +57,7 @@ DCF77 DCF = DCF77(LED_PIN,DCF_PIN,DCF_INTERRUPT);   // Interrupt DCF77
 //*************************************************************************************
 
 // function to crate HTML Colour
-void array_to_string(byte array[], unsigned int len, char buffer[])
-{
+void array_to_string(byte array[], unsigned int len, char buffer[]) {
     for (unsigned int i = 0; i < len; i++)
     {
         byte nib1 = (array[i] >> 4) & 0x0F;
@@ -76,15 +68,6 @@ void array_to_string(byte array[], unsigned int len, char buffer[])
     buffer[len*2] = '\0';
 }
 
-void colorWipe(uint8_t R, uint8_t G, uint8_t B) {
-  RgbColor RGB(R,G,B);
-  for(uint8_t i=0; i<29; i++) { // For each pixel...
-      strip.SetPixelColor(i, RGB);
-      strip.Show();
-      delay(20);
-    } 
-}
- 
 void printDigits(int digits){
   // utility function for digital clock display: prints preceding colon and leading 0
   Serial.print(":");
@@ -128,15 +111,12 @@ void displayTime() {
   
   // LEDs aus bis auf Doppelpunkt
   for(uint8_t i=0; i<13; i++) { // For each pixel...
-          RgbColor AUS(0,0,0);
-          strip.SetPixelColor(i, AUS);
+          leds[i] = CRGB::Black;
         }
   for(uint8_t i=14; i<30; i++) { // For each pixel...
-          RgbColor AUS(0,0,0);
-          strip.SetPixelColor(i, AUS);
+          leds[i] = CRGB::Black;
         }
 
-  RgbColor RGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
   int hours = hour();
   
   byte upperHours = (hour() / 10) % 10;
@@ -147,109 +127,110 @@ void displayTime() {
   switch (upperHours) {
 
         case 0: 
-            strip.SetPixelColor(1, RGB);
+            leds[1].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
             break;
         case 1:
-            strip.SetPixelColor(2, RGB);
+            leds[2].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
             break;
         case 2:
-            strip.SetPixelColor(0, RGB);
+            leds[0].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
             break;
   }
 
   switch (lowerHours) {
         case 0: 
-            strip.SetPixelColor(7, RGB);
+            leds[7].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
             break;
         case 1:
-            strip.SetPixelColor(8, RGB);
+            leds[8].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
             break;
         case 2:
-            strip.SetPixelColor(6, RGB);
+            leds[6].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
             break;
         case 3:
-            strip.SetPixelColor(9, RGB);
+            leds[9].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
             break;
         case 4:
-            strip.SetPixelColor(5, RGB);
+            leds[5].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
             break;
         case 5:
-            strip.SetPixelColor(10, RGB);
+            leds[10].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
             break;
         case 6:
-            strip.SetPixelColor(4, RGB);
+            leds[4].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
             break;
         case 7:
-            strip.SetPixelColor(11, RGB);
+            leds[11].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
             break;
         case 8:
-            strip.SetPixelColor(3, RGB);
+            leds[3].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
             break;
         case 9:
-            strip.SetPixelColor(12, RGB);
+            leds[12].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
             break;
     }
 
     switch (upperMinutes) {
         case 0: 
-            strip.SetPixelColor(16, RGB);
+            leds[16].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
             break;
         case 1:
-            strip.SetPixelColor(17, RGB);
+            leds[17].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
             break;
         case 2:
-            strip.SetPixelColor(15, RGB);
+            leds[15].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
             break;
         case 3:
-            strip.SetPixelColor(18, RGB);
+            leds[18].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
             break;
         case 4:
-            strip.SetPixelColor(14, RGB);
+            leds[14].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
             break;
         case 5:
-            strip.SetPixelColor(19, RGB);
+            leds[19].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
             break;
     }
 
     switch (lowerMinutes) {
         case 0: 
-            strip.SetPixelColor(24, RGB);
+            leds[24].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
             break;
         case 1:
-            strip.SetPixelColor(25, RGB);
+            leds[25].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
             break;
         case 2:
-            strip.SetPixelColor(23, RGB);
+            leds[23].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
             break;
         case 3:
-            strip.SetPixelColor(26, RGB);
+            leds[26].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
             break;
         case 4:
-            strip.SetPixelColor(22, RGB);
+            leds[22].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
             break;
         case 5:
-            strip.SetPixelColor(27, RGB);
+            leds[27].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
             break;
         case 6:
-            strip.SetPixelColor(21, RGB);
+            leds[21].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
             break;
         case 7:
-            strip.SetPixelColor(28, RGB);
+            leds[28].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
             break;
         case 8:
-            strip.SetPixelColor(20, RGB);
+            leds[20].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
             break;
         case 9:
-            strip.SetPixelColor(29, RGB);
+            leds[29].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
             break;
     }
-    strip.Show();
+    FastLED.setBrightness(configManager.data.matrixIntensity);
+    FastLED.show();
 }
 //*** END DCF77 SUBS
 
 void saveCallback() {
     intensity = configManager.data.matrixIntensity;
-    strip.SetBrightness(intensity);
+    FastLED.setBrightness(configManager.data.matrixIntensity);
     displayTime();
 }
 
@@ -306,15 +287,62 @@ void setup() {
   digitalWrite(BUILTIN_LED,HIGH);
 
 
-  // NeoPixelBus SETUP
-  // this resets all the neopixels to an off state
-    strip.Begin();
-    uint8_t intensity = configManager.data.matrixIntensity;
-    strip.SetBrightness(intensity);
-    strip.Show();
-    colorWipe(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
-    delay(5000);
-    colorWipe(0,0,0);
+  // FastLED SETUP
+  // Uncomment/edit one of the following lines for your leds arrangement.
+    // ## Clockless types ##
+    FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);  // GRB ordering is assumed
+    // FastLED.addLeds<SM16703, DATA_PIN, RGB>(leds, NUM_LEDS);
+    // FastLED.addLeds<TM1829, DATA_PIN, RGB>(leds, NUM_LEDS);
+    // FastLED.addLeds<TM1812, DATA_PIN, RGB>(leds, NUM_LEDS);
+    // FastLED.addLeds<TM1809, DATA_PIN, RGB>(leds, NUM_LEDS);
+    // FastLED.addLeds<TM1804, DATA_PIN, RGB>(leds, NUM_LEDS);
+    // FastLED.addLeds<TM1803, DATA_PIN, RGB>(leds, NUM_LEDS);
+    // FastLED.addLeds<UCS1903, DATA_PIN, RGB>(leds, NUM_LEDS);
+    // FastLED.addLeds<UCS1903B, DATA_PIN, RGB>(leds, NUM_LEDS);
+    // FastLED.addLeds<UCS1904, DATA_PIN, RGB>(leds, NUM_LEDS);
+    // FastLED.addLeds<UCS2903, DATA_PIN, RGB>(leds, NUM_LEDS);
+    // FastLED.addLeds<WS2812, DATA_PIN, RGB>(leds, NUM_LEDS);  // GRB ordering is typical
+    // FastLED.addLeds<WS2852, DATA_PIN, RGB>(leds, NUM_LEDS);  // GRB ordering is typical
+    // FastLED.addLeds<WS2812B, DATA_PIN, RGB>(leds, NUM_LEDS);  // GRB ordering is typical
+    // FastLED.addLeds<GS1903, DATA_PIN, RGB>(leds, NUM_LEDS);
+    // FastLED.addLeds<SK6812, DATA_PIN, RGB>(leds, NUM_LEDS);  // GRB ordering is typical
+    // FastLED.addLeds<SK6822, DATA_PIN, RGB>(leds, NUM_LEDS);
+    // FastLED.addLeds<APA106, DATA_PIN, RGB>(leds, NUM_LEDS);
+    // FastLED.addLeds<PL9823, DATA_PIN, RGB>(leds, NUM_LEDS);
+    // FastLED.addLeds<SK6822, DATA_PIN, RGB>(leds, NUM_LEDS);
+    // FastLED.addLeds<WS2811, DATA_PIN, RGB>(leds, NUM_LEDS);
+    // FastLED.addLeds<WS2813, DATA_PIN, RGB>(leds, NUM_LEDS);
+    // FastLED.addLeds<APA104, DATA_PIN, RGB>(leds, NUM_LEDS);
+    // FastLED.addLeds<WS2811_400, DATA_PIN, RGB>(leds, NUM_LEDS);
+    // FastLED.addLeds<GE8822, DATA_PIN, RGB>(leds, NUM_LEDS);
+    // FastLED.addLeds<GW6205, DATA_PIN, RGB>(leds, NUM_LEDS);
+    // FastLED.addLeds<GW6205_400, DATA_PIN, RGB>(leds, NUM_LEDS);
+    // FastLED.addLeds<LPD1886, DATA_PIN, RGB>(leds, NUM_LEDS);
+    // FastLED.addLeds<LPD1886_8BIT, DATA_PIN, RGB>(leds, NUM_LEDS);
+    // ## Clocked (SPI) types ##
+    // FastLED.addLeds<LPD6803, DATA_PIN, CLOCK_PIN, RGB>(leds, NUM_LEDS);  // GRB ordering is typical
+    // FastLED.addLeds<LPD8806, DATA_PIN, CLOCK_PIN, RGB>(leds, NUM_LEDS);  // GRB ordering is typical
+    // FastLED.addLeds<WS2801, DATA_PIN, CLOCK_PIN, RGB>(leds, NUM_LEDS);
+    // FastLED.addLeds<WS2803, DATA_PIN, CLOCK_PIN, RGB>(leds, NUM_LEDS);
+    // FastLED.addLeds<SM16716, DATA_PIN, CLOCK_PIN, RGB>(leds, NUM_LEDS);
+    // FastLED.addLeds<P9813, DATA_PIN, CLOCK_PIN, RGB>(leds, NUM_LEDS);  // BGR ordering is typical
+    // FastLED.addLeds<DOTSTAR, DATA_PIN, CLOCK_PIN, RGB>(leds, NUM_LEDS);  // BGR ordering is typical
+    // FastLED.addLeds<APA102, DATA_PIN, CLOCK_PIN, RGB>(leds, NUM_LEDS);  // BGR ordering is typical
+    // FastLED.addLeds<SK9822, DATA_PIN, CLOCK_PIN, RGB>(leds, NUM_LEDS);  // BGR ordering is typical
+
+        leds[0] = CRGB::Red;
+        FastLED.show();
+        delay(500);
+        // Now turn the LED off, then pause
+        leds[0] = CRGB::Black;
+        FastLED.show();
+        delay(500);
+        
+        // Set brightness
+        FastLED.setBrightness(configManager.data.matrixIntensity);
+    
+    
+    
 
     // DCF77
     DCF.Start();
@@ -367,27 +395,23 @@ void loop() {
       if (dash.data.DCF77_Sync && configManager.data.DCF77Indicator && configManager.data.DCF77) {
         if (secondBlink) {
           secondBlink = false;
-          RgbColor AUS(0,0,0);
-          strip.SetPixelColor(13, AUS);
+          leds[13] = CRGB::Black;
         } else {
           secondBlink = true;
-          RgbColor RGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
-          strip.SetPixelColor(13, RGB);
+          leds[13].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
         }
       } 
       if (!configManager.data.DCF77Indicator) {
         if (secondBlink) {
           secondBlink = false;
-          RgbColor AUS(0,0,0);
-          strip.SetPixelColor(13, AUS);
+          leds[13] = CRGB::Black;
         } else {
           secondBlink = true;
-          RgbColor RGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
-          strip.SetPixelColor(13, RGB);
+          leds[13].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
         }
       }
     
-  strip.Show();
+  FastLED.show();
   digitalClockDisplay();      // printout time info on serial
   displayTime();              // printout time on display
 } // TASK A END
@@ -425,13 +449,11 @@ void loop() {
       // show signal on stripe during sync
       if (!dash.data.DCF77_Sync && configManager.data.DCF77Indicator) {
         if (signal) {
-          RgbColor RGB(255,0,0);          // red
-          strip.SetPixelColor(13, RGB);
+          leds[13] = CRGB::Red;          // red
         } else {
-          RgbColor AUS(0,0,0);
-          strip.SetPixelColor(13, AUS);
+          leds[13] = CRGB::Black;
         }
-      strip.Show();
+      FastLED.show();
       }
     }
 

@@ -90,14 +90,5 @@
         "control": "slider",
         "min": 0,
         "max": 255
-    },
-    {
-        "name": "matrixFade",
-        "label": "Überblendgeschwindigkeit",
-        "type": "uint8_t",
-        "value": "0",
-        "control": "slider",
-        "min": 0,
-        "max": 500
     }
 ]
