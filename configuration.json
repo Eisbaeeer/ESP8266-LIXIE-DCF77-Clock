@@ -93,7 +93,7 @@
     },
     {
         "name": "rainbow",
-        "label": "Rainbow Effekt,
+        "label": "Rainbow Effekt",
         "type": "bool",
         "value": true
     }
