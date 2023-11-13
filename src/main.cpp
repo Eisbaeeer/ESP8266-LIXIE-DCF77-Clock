@@ -23,9 +23,8 @@ CRGB leds[NUM_LEDS];
 // Colorpalette
 CRGBPalette16 currentPalette;
 TBlendType    currentBlending;
-extern CRGBPalette16 myRedWhiteBluePalette;
-extern const TProgmemPalette16 myRedWhiteBluePalette_p PROGMEM;
-static uint8_t startIndex = 0;
+uint8_t colorIndex;
+uint8_t startIndex = 0;
 
 // Update client
 WiFiClient updateclient;
@@ -112,7 +111,7 @@ void digitalClockDisplay(){
   
 }
 
-void displayTime(uint8_t colorIndex) {
+void displayTime() {
   // Display time on LIXIE
   
   // LEDs aus bis auf Doppelpunkt
@@ -133,109 +132,220 @@ void displayTime(uint8_t colorIndex) {
   switch (upperHours) {
 
         case 0: 
-            leds[1].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
-            leds[1] = ColorFromPalette( currentPalette, colorIndex, configManager.data.matrixIntensity, currentBlending);
-        colorIndex += 3;
+            if (!configManager.data.rainbow) { 
+              leds[1].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            } else {
+              leds[1] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            }
             break;
         case 1:
-            leds[2].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
-            leds[2] = ColorFromPalette( currentPalette, colorIndex, configManager.data.matrixIntensity, currentBlending);
+            if (!configManager.data.rainbow) { 
+              leds[2].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            } else {
+              leds[2] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            }
             break;
         case 2:
-            leds[0].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
-            leds[0] = ColorFromPalette( currentPalette, colorIndex, configManager.data.matrixIntensity, currentBlending);
+            if (!configManager.data.rainbow) { 
+              leds[0].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            } else {
+              leds[0] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            }
             break;
   }
 
   switch (lowerHours) {
-        case 0: 
-            leds[7].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+        case 0:
+            if (!configManager.data.rainbow) { 
+              leds[7].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            } else {
+              leds[7] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            } 
             break;
         case 1:
-            leds[8].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            if (!configManager.data.rainbow) { 
+              leds[8].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            } else {
+              leds[8] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            }
             break;
         case 2:
-            leds[6].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            if (!configManager.data.rainbow) { 
+              leds[6].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            } else {
+              leds[6] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            }
             break;
         case 3:
-            leds[9].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            if (!configManager.data.rainbow) { 
+              leds[9].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            } else {
+              leds[9] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            }
             break;
         case 4:
-            leds[5].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            if (!configManager.data.rainbow) { 
+              leds[5].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            } else {
+              leds[5] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            }
             break;
         case 5:
-            leds[10].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            if (!configManager.data.rainbow) { 
+              leds[10].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            } else {
+              leds[10] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            }
             break;
         case 6:
-            leds[4].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            if (!configManager.data.rainbow) { 
+              leds[4].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            } else {
+              leds[4] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            }
             break;
         case 7:
-            leds[11].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            if (!configManager.data.rainbow) { 
+              leds[11].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            } else {
+              leds[11] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            }
             break;
         case 8:
-            leds[3].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            if (!configManager.data.rainbow) { 
+              leds[3].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            } else {
+              leds[3] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            }
             break;
         case 9:
-            leds[12].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            if (!configManager.data.rainbow) { 
+              leds[12].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            } else {
+              leds[12] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            }
             break;
     }
 
     switch (upperMinutes) {
         case 0: 
-            leds[16].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            if (!configManager.data.rainbow) { 
+              leds[16].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            } else {
+              leds[16] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            }
             break;
         case 1:
-            leds[17].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            if (!configManager.data.rainbow) { 
+              leds[17].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            } else {
+              leds[17] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            }
             break;
         case 2:
-            leds[15].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            if (!configManager.data.rainbow) { 
+              leds[15].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            } else {
+              leds[15] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            }
             break;
         case 3:
-            leds[18].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            if (!configManager.data.rainbow) { 
+              leds[18].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            } else {
+              leds[18] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            }
             break;
         case 4:
-            leds[14].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            if (!configManager.data.rainbow) { 
+              leds[14].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            } else {
+              leds[14] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            }
             break;
         case 5:
-            leds[19].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            if (!configManager.data.rainbow) { 
+              leds[19].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            } else {
+              leds[19] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            }
             break;
     }
 
     switch (lowerMinutes) {
         case 0: 
-            leds[24].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            if (!configManager.data.rainbow) { 
+              leds[24].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            } else {
+              leds[24] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            }
             break;
         case 1:
-            leds[25].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            if (!configManager.data.rainbow) { 
+              leds[25].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            } else {
+              leds[25] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            }
             break;
         case 2:
-            leds[23].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            if (!configManager.data.rainbow) { 
+              leds[23].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            } else {
+              leds[23] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            }
             break;
         case 3:
-            leds[26].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            if (!configManager.data.rainbow) { 
+              leds[26].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            } else {
+              leds[26] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            }
             break;
         case 4:
-            leds[22].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            if (!configManager.data.rainbow) { 
+              leds[22].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            } else {
+              leds[22] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            }
             break;
         case 5:
-            leds[27].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            if (!configManager.data.rainbow) { 
+              leds[27].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            } else {
+              leds[27] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            }
             break;
         case 6:
-            leds[21].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            if (!configManager.data.rainbow) { 
+              leds[21].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            } else {
+              leds[21] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            }
             break;
         case 7:
-            leds[28].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            if (!configManager.data.rainbow) { 
+              leds[28].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            } else {
+              leds[28] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            }
             break;
         case 8:
-            leds[20].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            if (!configManager.data.rainbow) { 
+              leds[20].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            } else {
+              leds[20] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            }
             break;
         case 9:
-            leds[29].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            if (!configManager.data.rainbow) { 
+              leds[29].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            } else {
+              leds[29] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            }
             break;
     }
     FastLED.setBrightness(configManager.data.matrixIntensity);
     FastLED.show();
-    colorIndex += 3;
 }
 //*** END DCF77 SUBS
 
@@ -246,7 +356,7 @@ void saveCallback() {
         currentPalette = RainbowColors_p;
         currentBlending = LINEARBLEND;  
     }
-    displayTime(startIndex);
+    displayTime();
 }
 
 void syncTime() {
@@ -276,97 +386,6 @@ void syncTime() {
         Serial.println(F("[ERROR] Timeout while receiving the time"));
     }
 }
-
-// Color Effekt Subs
-// This function fills the palette with totally random colors.
-void SetupTotallyRandomPalette() {
-    for( int i = 0; i < 16; ++i) {
-        currentPalette[i] = CHSV( random8(), 255, random8());
-    }
-}
- 
-// This function sets up a palette of black and white stripes,
-// using code.  Since the palette is effectively an array of
-// sixteen CRGB colors, the various fill_* functions can be used
-// to set them up.
-void SetupBlackAndWhiteStripedPalette() {
-    // 'black out' all 16 palette entries...
-    fill_solid( currentPalette, 16, CRGB::Black);
-    // and set every fourth one to white.
-    currentPalette[0] = CRGB::White;
-    currentPalette[4] = CRGB::White;
-    currentPalette[8] = CRGB::White;
-    currentPalette[12] = CRGB::White;
-    
-}
- 
-// This function sets up a palette of purple and green stripes.
-void SetupPurpleAndGreenPalette() {
-    CRGB purple = CHSV( HUE_PURPLE, 255, 255);
-    CRGB green  = CHSV( HUE_GREEN, 255, 255);
-    CRGB black  = CRGB::Black;
-    
-    currentPalette = CRGBPalette16(
-                                   green,  green,  black,  black,
-                                   purple, purple, black,  black,
-                                   green,  green,  black,  black,
-                                   purple, purple, black,  black );
-}
- 
- 
-// This example shows how to set up a static color palette
-// which is stored in PROGMEM (flash), which is almost always more
-// plentiful than RAM.  A static PROGMEM palette like this
-// takes up 64 bytes of flash.
-const TProgmemPalette16 myRedWhiteBluePalette_p PROGMEM = {
-    CRGB::Red,
-    CRGB::Gray, // 'white' is too bright compared to red and blue
-    CRGB::Blue,
-    CRGB::Black,
-    
-    CRGB::Red,
-    CRGB::Gray,
-    CRGB::Blue,
-    CRGB::Black,
-    
-    CRGB::Red,
-    CRGB::Red,
-    CRGB::Gray,
-    CRGB::Gray,
-    CRGB::Blue,
-    CRGB::Blue,
-    CRGB::Black,
-    CRGB::Black
-};
-
-// There are several different palettes of colors demonstrated here.
-//
-// FastLED provides several 'preset' palettes: RainbowColors_p, RainbowStripeColors_p,
-// OceanColors_p, CloudColors_p, LavaColors_p, ForestColors_p, and PartyColors_p.
-//
-// Additionally, you can manually define your own color palettes, or you can write
-// code that creates color palettes on the fly.  All are shown here.
- 
-void ChangePalettePeriodically() {
-    uint8_t secondHand = (millis() / 1000) % 60;
-    static uint8_t lastSecond = 99;
-    
-    if( lastSecond != secondHand) {
-        lastSecond = secondHand;
-        if( secondHand ==  0)  { currentPalette = RainbowColors_p;         currentBlending = LINEARBLEND; }
-        if( secondHand == 10)  { currentPalette = RainbowStripeColors_p;   currentBlending = NOBLEND;  }
-        if( secondHand == 15)  { currentPalette = RainbowStripeColors_p;   currentBlending = LINEARBLEND; }
-        if( secondHand == 20)  { SetupPurpleAndGreenPalette();             currentBlending = LINEARBLEND; }
-        if( secondHand == 25)  { SetupTotallyRandomPalette();              currentBlending = LINEARBLEND; }
-        if( secondHand == 30)  { SetupBlackAndWhiteStripedPalette();       currentBlending = NOBLEND; }
-        if( secondHand == 35)  { SetupBlackAndWhiteStripedPalette();       currentBlending = LINEARBLEND; }
-        if( secondHand == 40)  { currentPalette = CloudColors_p;           currentBlending = LINEARBLEND; }
-        if( secondHand == 45)  { currentPalette = PartyColors_p;           currentBlending = LINEARBLEND; }
-        if( secondHand == 50)  { currentPalette = myRedWhiteBluePalette_p; currentBlending = NOBLEND;  }
-        if( secondHand == 55)  { currentPalette = myRedWhiteBluePalette_p; currentBlending = LINEARBLEND; }
-    }
-}
-
 
 void setup() {
   Serial.begin(115200);
@@ -472,6 +491,8 @@ void loop() {
   configManager.loop();
   dash.loop();
 
+  // Color Effekts
+  startIndex = startIndex + 2; /* motion speed higher=longer*/
   
   // Tasks routines
     //tasks
@@ -480,13 +501,7 @@ void loop() {
 
       seconds++;
 
-  // Color Effekts
-  ChangePalettePeriodically();
-  startIndex = startIndex + 1; /* motion speed */
-
-
-      isCaptive = WiFiManager.isCaptivePortal();
-
+  isCaptive = WiFiManager.isCaptivePortal();
         int rssi = 0;
         rssi = WiFi.RSSI();
         sprintf(dash.data.Wifi_RSSI, "%ld", rssi) ;
@@ -503,6 +518,9 @@ void loop() {
     }
   }
   
+    // upper color index every second
+    colorIndex += 1;
+
     // Blink separator
       if (dash.data.DCF77_Sync && configManager.data.DCF77Indicator && configManager.data.DCF77) {
         if (secondBlink) {
@@ -510,7 +528,11 @@ void loop() {
           leds[13] = CRGB::Black;
         } else {
           secondBlink = true;
-          leds[13].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+          if (!configManager.data.rainbow) { 
+              leds[13].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            } else {
+              leds[13] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            }
         }
       } 
       if (!configManager.data.DCF77Indicator) {
@@ -519,13 +541,16 @@ void loop() {
           leds[13] = CRGB::Black;
         } else {
           secondBlink = true;
-          leds[13].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+          if (!configManager.data.rainbow) { 
+              leds[13].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            } else {
+              leds[13] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            }
         }
       }
     
   FastLED.show();
   digitalClockDisplay();      // printout time info on serial
-  displayTime(startIndex);              // printout time on display
 } // TASK A END
 
   // TASK B
@@ -568,6 +593,9 @@ void loop() {
       FastLED.show();
       }
     }
+
+    // Print out clock to LED´s
+    displayTime();              // printout time on display
 
   }
 }
