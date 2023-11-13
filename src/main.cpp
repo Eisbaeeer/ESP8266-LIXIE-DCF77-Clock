@@ -20,6 +20,11 @@
 #define DATA_PIN 3  
 // Define the array of leds
 CRGB leds[NUM_LEDS];
+// Colorpalette
+CRGBPalette16 currentPalette;
+TBlendType    currentBlending;
+extern CRGBPalette16 myRedWhiteBluePalette;
+extern const TProgmemPalette16 myRedWhiteBluePalette_p PROGMEM;
 
 // Update client
 WiFiClient updateclient;
@@ -106,7 +111,7 @@ void digitalClockDisplay(){
   
 }
 
-void displayTime() {
+void displayTime(uint8_t colorIndex) {
   // Display time on LIXIE
   
   // LEDs aus bis auf Doppelpunkt
@@ -128,12 +133,16 @@ void displayTime() {
 
         case 0: 
             leds[1].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            leds[1] = ColorFromPalette( currentPalette, colorIndex, configManager.data.matrixIntensity, currentBlending);
+        colorIndex += 3;
             break;
         case 1:
             leds[2].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            leds[2] = ColorFromPalette( currentPalette, colorIndex, configManager.data.matrixIntensity, currentBlending);
             break;
         case 2:
             leds[0].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            leds[0] = ColorFromPalette( currentPalette, colorIndex, configManager.data.matrixIntensity, currentBlending);
             break;
   }
 
@@ -225,13 +234,14 @@ void displayTime() {
     }
     FastLED.setBrightness(configManager.data.matrixIntensity);
     FastLED.show();
+    colorIndex += 3;
 }
 //*** END DCF77 SUBS
 
 void saveCallback() {
     intensity = configManager.data.matrixIntensity;
     FastLED.setBrightness(configManager.data.matrixIntensity);
-    displayTime();
+    displayTime(startIndex);
 }
 
 void syncTime() {
@@ -341,6 +351,10 @@ void setup() {
         // Set brightness
         FastLED.setBrightness(configManager.data.matrixIntensity);
     
+    if (configManager.data.rainbow) {
+        currentPalette = RainbowColors_p;
+        currentBlending = LINEARBLEND;  
+    }
     
     
 
@@ -367,6 +381,12 @@ void loop() {
   configManager.loop();
   dash.loop();
 
+  // Color Effekts
+  ChangePalettePeriodically();
+  static uint8_t startIndex = 0;
+  startIndex = startIndex + 1; /* motion speed */
+
+  // Tasks routines
     //tasks
     if (taskA.previous == 0 || (millis() - taskA.previous > taskA.rate)) {
         taskA.previous = millis();
@@ -413,7 +433,7 @@ void loop() {
     
   FastLED.show();
   digitalClockDisplay();      // printout time info on serial
-  displayTime();              // printout time on display
+  displayTime(startIndex);              // printout time on display
 } // TASK A END
 
   // TASK B
@@ -460,3 +480,98 @@ void loop() {
   }
 }
 
+
+// Color Effekt Subs
+// There are several different palettes of colors demonstrated here.
+//
+// FastLED provides several 'preset' palettes: RainbowColors_p, RainbowStripeColors_p,
+// OceanColors_p, CloudColors_p, LavaColors_p, ForestColors_p, and PartyColors_p.
+//
+// Additionally, you can manually define your own color palettes, or you can write
+// code that creates color palettes on the fly.  All are shown here.
+ 
+void ChangePalettePeriodically()
+{
+    uint8_t secondHand = (millis() / 1000) % 60;
+    static uint8_t lastSecond = 99;
+    
+    if( lastSecond != secondHand) {
+        lastSecond = secondHand;
+        if( secondHand ==  0)  { currentPalette = RainbowColors_p;         currentBlending = LINEARBLEND; }
+        if( secondHand == 10)  { currentPalette = RainbowStripeColors_p;   currentBlending = NOBLEND;  }
+        if( secondHand == 15)  { currentPalette = RainbowStripeColors_p;   currentBlending = LINEARBLEND; }
+        if( secondHand == 20)  { SetupPurpleAndGreenPalette();             currentBlending = LINEARBLEND; }
+        if( secondHand == 25)  { SetupTotallyRandomPalette();              currentBlending = LINEARBLEND; }
+        if( secondHand == 30)  { SetupBlackAndWhiteStripedPalette();       currentBlending = NOBLEND; }
+        if( secondHand == 35)  { SetupBlackAndWhiteStripedPalette();       currentBlending = LINEARBLEND; }
+        if( secondHand == 40)  { currentPalette = CloudColors_p;           currentBlending = LINEARBLEND; }
+        if( secondHand == 45)  { currentPalette = PartyColors_p;           currentBlending = LINEARBLEND; }
+        if( secondHand == 50)  { currentPalette = myRedWhiteBluePalette_p; currentBlending = NOBLEND;  }
+        if( secondHand == 55)  { currentPalette = myRedWhiteBluePalette_p; currentBlending = LINEARBLEND; }
+    }
+}
+ 
+// This function fills the palette with totally random colors.
+void SetupTotallyRandomPalette()
+{
+    for( int i = 0; i < 16; ++i) {
+        currentPalette[i] = CHSV( random8(), 255, random8());
+    }
+}
+ 
+// This function sets up a palette of black and white stripes,
+// using code.  Since the palette is effectively an array of
+// sixteen CRGB colors, the various fill_* functions can be used
+// to set them up.
+void SetupBlackAndWhiteStripedPalette()
+{
+    // 'black out' all 16 palette entries...
+    fill_solid( currentPalette, 16, CRGB::Black);
+    // and set every fourth one to white.
+    currentPalette[0] = CRGB::White;
+    currentPalette[4] = CRGB::White;
+    currentPalette[8] = CRGB::White;
+    currentPalette[12] = CRGB::White;
+    
+}
+ 
+// This function sets up a palette of purple and green stripes.
+void SetupPurpleAndGreenPalette()
+{
+    CRGB purple = CHSV( HUE_PURPLE, 255, 255);
+    CRGB green  = CHSV( HUE_GREEN, 255, 255);
+    CRGB black  = CRGB::Black;
+    
+    currentPalette = CRGBPalette16(
+                                   green,  green,  black,  black,
+                                   purple, purple, black,  black,
+                                   green,  green,  black,  black,
+                                   purple, purple, black,  black );
+}
+ 
+ 
+// This example shows how to set up a static color palette
+// which is stored in PROGMEM (flash), which is almost always more
+// plentiful than RAM.  A static PROGMEM palette like this
+// takes up 64 bytes of flash.
+const TProgmemPalette16 myRedWhiteBluePalette_p PROGMEM =
+{
+    CRGB::Red,
+    CRGB::Gray, // 'white' is too bright compared to red and blue
+    CRGB::Blue,
+    CRGB::Black,
+    
+    CRGB::Red,
+    CRGB::Gray,
+    CRGB::Blue,
+    CRGB::Black,
+    
+    CRGB::Red,
+    CRGB::Red,
+    CRGB::Gray,
+    CRGB::Gray,
+    CRGB::Blue,
+    CRGB::Blue,
+    CRGB::Black,
+    CRGB::Black
+};

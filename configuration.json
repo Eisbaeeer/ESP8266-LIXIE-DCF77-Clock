@@ -90,5 +90,11 @@
         "control": "slider",
         "min": 0,
         "max": 255
+    },
+    {
+        "name": "rainbow",
+        "label": "Rainbow Effekt,
+        "type": "bool",
+        "value": true
     }
 ]
