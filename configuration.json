@@ -95,6 +95,6 @@
         "name": "rainbow",
         "label": "Rainbow Effekt",
         "type": "bool",
-        "value": true
+        "value": false
     }
 ]
