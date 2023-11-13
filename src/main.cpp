@@ -445,12 +445,8 @@ void setup() {
         
         // Set brightness
         FastLED.setBrightness(configManager.data.matrixIntensity);
-    
-    if (configManager.data.rainbow) {
         currentPalette = RainbowColors_p;
-        currentBlending = LINEARBLEND;  
-    }
-    
+        currentBlending = LINEARBLEND;   
     
 
     // DCF77
@@ -476,17 +472,18 @@ void loop() {
   configManager.loop();
   dash.loop();
 
-  // Color Effekts
-  ChangePalettePeriodically();
-  static uint8_t startIndex = 0;
-  startIndex = startIndex + 1; /* motion speed */
-
+  
   // Tasks routines
     //tasks
     if (taskA.previous == 0 || (millis() - taskA.previous > taskA.rate)) {
         taskA.previous = millis();
 
       seconds++;
+
+  // Color Effekts
+  ChangePalettePeriodically();
+  startIndex = startIndex + 1; /* motion speed */
+
 
       isCaptive = WiFiManager.isCaptivePortal();
 
