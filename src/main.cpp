@@ -114,11 +114,8 @@ void digitalClockDisplay(){
 void displayTime() {
   // Display time on LIXIE
   
-  // LEDs aus bis auf Doppelpunkt
-  for(uint8_t i=0; i<13; i++) { // For each pixel...
-          leds[i] = CRGB::Black;
-        }
-  for(uint8_t i=14; i<30; i++) { // For each pixel...
+  // LEDs aus 
+  for(uint8_t i=0; i<30; i++) { // For each pixel...
           leds[i] = CRGB::Black;
         }
 
@@ -344,6 +341,59 @@ void displayTime() {
             }
             break;
     }
+    // Blinking indicator control
+    /***
+     / Blink separator
+      if (dash.data.DCF77_Sync && configManager.data.DCF77Indicator && configManager.data.DCF77) {
+        if (secondBlink) {
+          secondBlink = false;
+          leds[13] = CRGB::Black;
+        } else {
+          secondBlink = true;
+          if (!configManager.data.rainbow) { 
+              leds[13].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configsecondBlinkManager.data.ledColour[2]);
+            } else {
+              leds[13] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            }
+        }
+      } 
+      if (!configManager.data.DCF77Indicator) {
+        if (secondBlink) {
+          secondBlink = false;
+          leds[13] = CRGB::Black;
+        } else {
+          secondBlink = true;
+          if (!configManager.data.rainbow) { 
+              leds[13].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            } else {
+              leds[13] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            }
+        }
+      }
+    
+  FastLED.show();
+    */
+    if (secondBlink) {
+      if (dash.data.DCF77_Sync && configManager.data.DCF77Indicator && configManager.data.DCF77) {
+         if (!configManager.data.rainbow) { 
+              leds[13].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            } else {
+              leds[13] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            }
+      } else {
+        leds[13] = CRGB::Black;
+      }
+    if (!configManager.data.DCF77Indicator) {
+      if (!configManager.data.rainbow) { 
+              leds[13].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
+            } else {
+              leds[13] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
+            }
+      } else {
+        leds[13] = CRGB::Black;
+      }
+    } 
+    
     FastLED.setBrightness(configManager.data.matrixIntensity);
     FastLED.show();
 }
@@ -454,7 +504,7 @@ void setup() {
     // FastLED.addLeds<APA102, DATA_PIN, CLOCK_PIN, RGB>(leds, NUM_LEDS);  // BGR ordering is typical
     // FastLED.addLeds<SK9822, DATA_PIN, CLOCK_PIN, RGB>(leds, NUM_LEDS);  // BGR ordering is typical
 
-        leds[0] = CRGB::Red;
+        leds[0] = CRGB::Blue;
         FastLED.show();
         delay(500);
         // Now turn the LED off, then pause
@@ -494,12 +544,16 @@ void loop() {
   // Color Effekts
   startIndex = startIndex + 2; /* motion speed higher=longer*/
   
+  if (seconds != second()) {
+    seconds = second();
+    secondBlink = !secondBlink;
+    }
+
+
   // Tasks routines
     //tasks
     if (taskA.previous == 0 || (millis() - taskA.previous > taskA.rate)) {
         taskA.previous = millis();
-
-      seconds++;
 
   isCaptive = WiFiManager.isCaptivePortal();
         int rssi = 0;
@@ -521,35 +575,6 @@ void loop() {
     // upper color index every second
     colorIndex += 1;
 
-    // Blink separator
-      if (dash.data.DCF77_Sync && configManager.data.DCF77Indicator && configManager.data.DCF77) {
-        if (secondBlink) {
-          secondBlink = false;
-          leds[13] = CRGB::Black;
-        } else {
-          secondBlink = true;
-          if (!configManager.data.rainbow) { 
-              leds[13].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
-            } else {
-              leds[13] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
-            }
-        }
-      } 
-      if (!configManager.data.DCF77Indicator) {
-        if (secondBlink) {
-          secondBlink = false;
-          leds[13] = CRGB::Black;
-        } else {
-          secondBlink = true;
-          if (!configManager.data.rainbow) { 
-              leds[13].setRGB(configManager.data.ledColour[0],configManager.data.ledColour[1],configManager.data.ledColour[2]);
-            } else {
-              leds[13] = ColorFromPalette( RainbowColors_p, colorIndex, configManager.data.matrixIntensity, LINEARBLEND);
-            }
-        }
-      }
-    
-  FastLED.show();
   digitalClockDisplay();      // printout time info on serial
 } // TASK A END
 
