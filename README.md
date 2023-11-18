@@ -10,12 +10,22 @@ This project is a full source to create a LIXIE clock with DCF77 support and Web
 - Wifi-Manager for easy connection to available AccessPoints
 - Webpage to configure all settings or read the values
 - OTA Over-The-Air update of firmware
-- Color picker for all color states
+- Color picker for full colors
+- Rainbow effekt (changes color)
+- Indicator for DCF77 signal
+
+## Hardware
+- 3mm HDF wood
+- 2mm acrylic
+- ESP8266 based mcu like D1 mini or NodeMCU
+- 
 
 ## ToDo
 - Additional sensors like BMP280, BME280, SHT3x
 - Pushbuttons to configure the clock
 - Alarm mode
+- DCF77 enable pin declaration (no need wire-bridge to GND)
+- Time set from dashboard
 
 ## Schematic
 
@@ -28,6 +38,7 @@ This project is a full source to create a LIXIE clock with DCF77 support and Web
 | GPIO12             | GND | GND                | DCF77        |
 | GPIO13             | VDD | DCF77 Enable       | DCF77        |
 
+![Logo](pics/Settings.jpg)
 ![Logo](pics/Lasercut.jpg)
 ![Logo](pics/Number.jpg)
 
@@ -38,10 +49,3 @@ E-Mail info@kidbuild.de
 ## Credits
 https://www.thingiverse.com/thing:5763808
 ala Creasento
-
-## Changelog 
-
-### Version 0.1
-20231013
-- Initial Version
-- DCF77 support
